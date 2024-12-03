@@ -3,16 +3,14 @@ use std::collections::HashMap;
 
 
 pub fn part1() {
-    let input_file = fs::read_to_string("/Users/anu/Documents/programming/AoC/2024/input/day1.txt").unwrap();
+    let input_file = fs::read_to_string("/Users/anu/Documents/programming/AoC/2024/input/day01.txt").unwrap();
 
-    let mut first: Vec<i32> = vec![];
-    let mut second: Vec<i32> = vec![];
-
-    for line in input_file.lines() {
-        let mut s = line.split_ascii_whitespace();
-        first.push(s.next().unwrap().parse().unwrap());
-        second.push(s.next().unwrap().parse().unwrap());
-    }
+    let (mut first, mut second): (Vec<i32>, Vec<i32>) = input_file
+        .lines()
+        .map(|l| {
+            let sp: Vec<&str> = l.split(" ").collect();
+            (sp[0].parse::<i32>().unwrap(), sp[sp.len()-1].parse::<i32>().unwrap())
+        }).unzip();
 
     first.sort();
     second.sort();
@@ -28,7 +26,7 @@ pub fn part1() {
 
 
 pub fn part2() {
-    let input_file = fs::read_to_string("/Users/anu/Documents/programming/AoC/2024/input/day1.txt").unwrap();
+    let input_file = fs::read_to_string("/Users/anu/Documents/programming/AoC/2024/input/day01.txt").unwrap();
 
     let mut left = vec![];
     let mut right = HashMap::new();
