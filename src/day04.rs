@@ -13,8 +13,8 @@ const DIRECTIONS: [(i32, i32); 8] = [
         (-1, 1)  // NE
     ];
 
-fn part1_helper(grid: &Vec<Vec<char>>, x: usize, y: usize) -> i32 {
-    if grid[y][x] != 'X' {
+fn part1_helper(grid: &Vec<Vec<char>>, x: i32, y: i32) -> i32 {
+    if grid[y as usize][x as usize] != 'X' {
         return 0;
     }
 
@@ -26,11 +26,9 @@ fn part1_helper(grid: &Vec<Vec<char>>, x: usize, y: usize) -> i32 {
     let mut count = 0;
     for (yi, xi) in DIRECTIONS {
         for (i, c) in PATTERN.char_indices() {
-            // cast
-            let ii = i as i32;
             /* Create our vectors */
-            let yy = (y as i32) + (yi * ii);
-            let xx = (x as i32) + (xi * ii);
+            let yy = y + (yi * i as i32);
+            let xx = x + (xi * i as i32);
 
             if yy < lower_y_bound || yy > upper_y_bound {
                 break;
@@ -40,10 +38,9 @@ fn part1_helper(grid: &Vec<Vec<char>>, x: usize, y: usize) -> i32 {
                 break;
             }
 
-            let y_pos = yy as usize;
-            let x_pos = xx as usize;
-
-            if grid[y_pos][x_pos] != c {
+            let yyy = yy as usize;
+            let xxx = xx as usize;
+            if grid[yyy][xxx] != c {
                 break;
             }
 
@@ -70,7 +67,7 @@ pub fn part1() {
             row.iter()
                 .enumerate()
                 /* Only start at the Xs */
-                .map(|(x, _)| part1_helper(&grid, x, y))
+                .map(|(x, _)| part1_helper(&grid, x as i32, y as i32))
                 .sum::<i32>())
         .sum();
 
