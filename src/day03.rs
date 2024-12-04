@@ -126,7 +126,7 @@ impl Operations {
             j += 1;
         }
 
-        (i >= input.len()).then_some(Operations::MUL(nums[0], nums[1]))
+        Some(Operations::MUL(nums[0], nums[1]))
     }
 
     fn operand_match_do_or_dont(idx: usize, input: &[u8]) -> Option<Operations> {
@@ -166,13 +166,13 @@ pub fn part2() {
 
     //for (i, c) in 
     
-    let ops = input_file
+    let ops: Vec<_> = input_file
         .char_indices()
         .filter_map(| (i, c)| match c {
             'd' => Operations::operand_match_do_or_dont(i, input_file.as_bytes()),
             'm' => Operations::operand_match_mul(i, input_file.as_bytes()),
             _ => None
-    });
+    }).collect();
 
     let mut sum = 0;
     let mut enabled = true;
