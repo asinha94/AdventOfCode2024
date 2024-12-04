@@ -163,16 +163,14 @@ impl Operations {
 
 pub fn part2() {
     let input_file = fs::read_to_string("/Users/anu/Documents/programming/AoC/2024/input/day03.txt").unwrap();
-
-    //for (i, c) in 
     
-    let ops: Vec<_> = input_file
+    let ops = input_file
         .char_indices()
         .filter_map(| (i, c)| match c {
             'd' => Operations::operand_match_do_or_dont(i, input_file.as_bytes()),
             'm' => Operations::operand_match_mul(i, input_file.as_bytes()),
             _ => None
-    }).collect();
+    });
 
     let mut sum = 0;
     let mut enabled = true;

@@ -73,3 +73,12 @@ pub fn part1() {
 
     println!("Total XMASes is {xmases}")
 }
+
+
+pub fn part2() {
+    let grid: Vec<_> = fs::read_to_string("/Users/anu/Documents/programming/AoC/2024/input/day04.txt")
+        .unwrap()
+        .lines()
+        .map(|l| l.chars().collect::<Vec<_>>())
+        .collect();
+}
