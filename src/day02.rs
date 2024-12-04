@@ -51,7 +51,7 @@ fn report_is_safe_level_remover(report: &Vec<i32>, start: usize, end: usize, is_
     
     // Can't get the range syntax to work
     // Start and s1 for the iteration
-    let loop_start = (start as i32) + step;;
+    let loop_start = (start as i32) + step;
     let mut i = loop_start;
     let end_i32 = end as i32;
     loop {
