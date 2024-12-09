@@ -10,15 +10,25 @@ fn calibration_correct(total: i64, operators: &Vec<i64>, use_concat: bool) -> bo
         }
 
         let mut totals = vec![];
+        let mut push_fn = |val| {
+            if val <= total {
+                totals.push(val);
+            }
+        };
+
         for possible_total in &all_possible_totals {
-            totals.push(operator * possible_total);
-            totals.push(operator + possible_total);
+            push_fn(operator * possible_total);
+            push_fn(operator + possible_total);
 
             if use_concat {
                 let pow10_shift = operator.to_string().len() as u32;
                 let new_total = possible_total * 10_i64.pow(pow10_shift);
-                totals.push(new_total + operator);
+                push_fn(new_total + operator);
             }
+        }
+
+        if totals.is_empty() {
+            return false;
         }
 
         all_possible_totals.clear();
