@@ -39,10 +39,10 @@ enum Direction {
     West
 }
 
-enum TraverserStatus {
-    Found,
-    NotFound,
-    Exited
+enum CycleStepper {
+    CycleDetected,
+    CycleNotDetected,
+    Again
 }
 
 impl Direction {
@@ -191,57 +191,34 @@ impl Guard {
         true
     }
 
-    fn step_till_cycle(&mut self, discovered: &mut HashSet<(i32, i32)>) -> TraverserStatus {
+    fn step_till_cycle(&mut self) -> CycleStepper {
 
-        /* Mark standing position. (x,y) is always on the map */
+        /* (x,y) is always on the map. Check if we've hit a cycle */
         let x = self.position.x as usize;
         let y = self.position.y as usize;
-
         let mut marker = Marker::create(self.map[y][x]);
+        
+        if marker.test_direction(self.direction) {
+            return CycleStepper::CycleDetected;
+        }
+
+        /* No cycle, mark standing position */
         marker.set_direction(self.direction);
         self.map[y][x] = marker.as_char();
-
-        /* Check if we can turn right */
-        let mut position = self.position.clone();
-        let turn_right = self.direction.get_clockwise_direction();
-        position += turn_right.get_direction_vector();
-
-        if self.within_bounds(position) {
-            /* Does turning right put us in a loop? */
-            let coords = (position.x, position.y);
-            let (m_x, m_y) = (coords.0 as usize, coords.1 as usize);
-
-            /* Check if its a obstacle */
-            let right_cell = self.map[m_y][m_x];
-            if right_cell != OBSTACLE {
-                let right_marker = Marker::create(right_cell);
-
-                if right_marker.test_direction(turn_right) {
-                    /* found a loop, is it unique? */
-                    if !discovered.contains(&coords) {
-                        discovered.insert(coords);
-                        return TraverserStatus::Found;
-                    }
-                }
-            }
-            
-        }
 
         /* Proceed onwards */
         self.position += self.direction.get_direction_vector();
         if !self.within_bounds(self.position) {
-            return TraverserStatus::Exited;
+            return CycleStepper::CycleNotDetected;
         }
-
 
         /* If we hit an obstacle, reverse course and turn right */
-        while self.hit_boundary() {
+        if self.hit_boundary() {
             self.position += self.direction.get_oposite_direction_vector();
             self.direction = self.direction.get_clockwise_direction();
-            self.position += self.direction.get_direction_vector();
         }
 
-        TraverserStatus::NotFound
+        CycleStepper::Again
     }
 
     fn get_path_position_count(&self) -> usize {
@@ -316,27 +293,38 @@ pub fn part2() {
         .collect();
     
     let starting_position = starting_position_vec[0];
-    let mut discovered: HashSet<(i32, i32)> = HashSet::new();
 
-     'GuardWalk: loop {
-        let mut guard = Guard{
-            direction: Direction::North,
-            position: starting_position,
-            map: grid.clone()
-        };
-    
-        /* Move to all possible positions till the guard exits */
-        loop {
-            match guard.step_till_cycle(&mut discovered) {
-                TraverserStatus::Exited => break 'GuardWalk,
-                TraverserStatus::Found => break,
-                TraverserStatus::NotFound => (),
-            }
-        }
+    let count: usize = grid.iter()
+        .enumerate()
+        .map(|(y, row)| {
+            row.iter()
+                .enumerate()
+                .filter(|(x, c)| {
+                    if **c != Marker::NULL_CHAR {
+                        return false;
+                    }
 
-    }
+                    /* Create copy of map with manually inserted obstable */
+                    let mut guard = Guard{
+                        direction: Direction::North,
+                        position: starting_position,
+                        map: grid.clone()
+                    };
 
-    println!("All placements: {}", discovered.len());
+                    guard.map[y][*x] = OBSTACLE;
+
+                    loop {
+                        match guard.step_till_cycle() {
+                            CycleStepper::CycleDetected => return true,
+                            CycleStepper::CycleNotDetected => return false,
+                            CycleStepper::Again => continue
+                        }
+                    }
+
+                }).count()
+        }).sum();
+
+    println!("All placements: {count}");
 
 
 }
