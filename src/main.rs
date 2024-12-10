@@ -1,10 +1,10 @@
-// mod day01;
-// mod day02;
-// mod day03;
-// mod day04;
-// mod day05;
-// mod day06;
-// mod day07;
+mod day01;
+mod day02;
+mod day03;
+mod day04;
+mod day05;
+mod day06;
+mod day07;
 mod day08;
 
 fn main() {
@@ -21,5 +21,6 @@ fn main() {
     // day06::part1();
     // day06::part2();
     // day07::part1();
-    day08::part1();
+    // day08::part1();
+    day08::part2();
 }
